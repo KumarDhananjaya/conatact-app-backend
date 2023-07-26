@@ -11,6 +11,11 @@ const getContacts = (req, res) => {
 //@access public
 const createContact = (req, res) => {
     console.log("The request bdy is :",req.body);
+    const {name, email, phone} = req.body;
+    if(!name || !email || !phone){
+        res.status(400);
+        throw new Error("All fields are compulsory");
+    }
     res.status(200).json({mesagge: "Create Contact"});
 }
 
