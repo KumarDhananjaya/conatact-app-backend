@@ -24,7 +24,9 @@ const createContact = asyncHandler(async (req, res) => {
     const contact = await Contact.create({
         name, 
         email, 
-        phone})
+        phone,
+        user_id: req.user.id
+    })
     res.status(201).json(contact);
 });
 
@@ -50,6 +52,11 @@ const updateContact = asyncHandler(async (req, res) => {
         throw new Error[" Contact Not Found "]
     }
 
+    if(contact.user_id.toString() !== req.user_id){
+        res.status(403);
+        throw new Error(" User don't have permission to update");
+    }
+
     const updatedContact = await Contact.findByIdAndUpdate(
         req.params.id, 
         req.body, 
@@ -62,12 +69,18 @@ const updateContact = asyncHandler(async (req, res) => {
 //@route DELETE /api/contacts/:id
 //@access private
 const deleteContact = asyncHandler(async (req, res) => {
-    const contact = await Contact.findByIdAndRemove(req.params.id);
+    const contact = await Contact.findById(req.params.id);
     if(!contact){
         res.status(404);
         throw new Error[" Contact Not Found "]
     }
 
+    if(contact.user_id.toString() !== req.user_id){
+        res.status(403);
+        throw new Error(" User don't have permission to update");
+    }
+
+    await Contact.deleteOne({_id: req.params.id});
     res.status(200).json(contact);
 });
 
