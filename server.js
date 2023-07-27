@@ -1,4 +1,5 @@
 const express = require('express');
+const { ErrorHandler } = require('./middleware/ErrorHandler');
 const dotenv = require('dotenv').config();
 
 
@@ -11,6 +12,8 @@ app.use(express.json());
 
 //adding a middleware
 app.use("/api/contacts", require("./routes/ContactRoutes") )
+
+app.use(ErrorHandler);
 
 app.listen(port, () => {
     console.log(`Server running on port : ${port}`);
